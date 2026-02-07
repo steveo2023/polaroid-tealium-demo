@@ -105,7 +105,7 @@ export default function PolaroidExecutiveUnifiedDemo() {
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 italic tracking-tighter">1. Device Experience</h2>
           <div className="relative flex-1 bg-black rounded-[2.8rem] border-[7px] border-slate-800 shadow-2xl overflow-hidden shadow-cyan-900/20 text-center">
             <div className="absolute inset-0 bg-cover bg-top" style={{ backgroundImage: `url(${step >= 6 ? '/NowPlus-Home-Screen.jpg' : '/app-bg.jpg'})`, opacity: isPlayingVideo ? 0 : 1 }} />
-            {isPlayingVideo && <video ref={videoRef} onEnded={handleVideoEnd} autoPlay className="absolute inset-0 w-full h-full object-cover z-20" src="/NowPlus-video.MP4" />}
+            {isPlayingVideo && <video ref={videoRef} onEnded={handleVideoEnd} autoPlay className="absolute inset-0 w-full h-full object-cover z-20" src="https://www.dropbox.com/scl/fi/csfmr73hwhutkxpdzxyju/NowPlus-video.MP4?rlkey=y7g4jz37z214xamyuhp84acmc&st=2wmh33ef&dl=1" />}
             
             {step === 6 && (
               <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/15">
