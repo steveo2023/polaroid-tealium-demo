@@ -50,7 +50,7 @@ export default function PolaroidUltimateROIPitch() {
       setClv(480.92); 
       setLastOrderValue(16.99);
       addEvent({ tealium_event: "visitor_identity_resolved", uid: "u_123456", clv: 480.92 });
-      setShowNudge(true); // Triggers "Master Your Now+"
+      setShowNudge(true); 
     }, 1500);
   };
 
@@ -66,7 +66,6 @@ export default function PolaroidUltimateROIPitch() {
   const handleVideoEnd = () => {
     setIsPlayingVideo(false); 
     setStep(5);
-    // Force sequence with distinct timeouts to ensure UI updates have time to render
     setTimeout(() => { 
         setStep(6); 
         setPhotoCount(5); 
@@ -79,7 +78,7 @@ export default function PolaroidUltimateROIPitch() {
     }, 3500);
 
     setTimeout(() => { 
-        setShowApertureNudge(true); // Triggers "Evening Capture"
+        setShowApertureNudge(true); 
     }, 6000); 
   };
 
@@ -90,7 +89,7 @@ export default function PolaroidUltimateROIPitch() {
     addEvent({ tealium_event: "feature_activated", feature: "manual_mode" });
     setTimeout(() => {
       addEvent({ tealium_event: "audience_joined", audience: "Film Replenishment" });
-      setShowFilmNudge(true); // Triggers "Creative Flow"
+      setShowFilmNudge(true); 
     }, 2000);
   };
 
@@ -231,7 +230,7 @@ export default function PolaroidUltimateROIPitch() {
                 </div>
               </section>
 
-              {/* SECTION 2: BADGES - 2 COLS */}
+              {/* SECTION 2: BADGES - 2 COLS, 50% LARGER TEXT */}
               <section className="text-left flex-shrink-1 min-h-0">
                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5 text-left">Badges</p>
                 <div className="grid grid-cols-2 gap-1">
@@ -286,7 +285,7 @@ function Attribute({ label, value }: { label: string, value: string }) {
 
 function Badge({ label, on }: { label: string, on?: boolean }) {
   return (
-    <div className={`px-1 py-1 rounded border text-[6px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
+    <div className={`px-1 py-1.5 rounded border text-[9px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
        {label}
     </div>
   );
