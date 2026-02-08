@@ -45,7 +45,7 @@ export default function PolaroidUltimateROIPitch() {
     setStep(1);
     addEvent({ tealium_event: "device_connect", model: "now_plus", status: "success" });
     setTimeout(() => {
-      setStep(3); setClv(480.92); setLastOrderValue(16.99); // Start with 16.99
+      setStep(3); setClv(480.92); setLastOrderValue(16.99);
       addEvent({ tealium_event: "visitor_identity_resolved", uid: "u_123456", clv: 480.92 });
       setShowNudge(true);
     }, 1500);
@@ -78,34 +78,19 @@ export default function PolaroidUltimateROIPitch() {
     addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Bundle" });
   };
 
-  useEffect(() => {
-    if (isPlayingVideo && videoRef.current) {
-      const interval = setInterval(() => {
-        const curr = Math.floor(videoRef.current?.currentTime || 0);
-        if (curr > videoTime) {
-            setVideoTime(curr);
-            if (curr === 31) addEvent({ tealium_event: "video_milestone", label: "Aperture Priority" });
-            if (curr === 45) addEvent({ tealium_event: "video_milestone", label: "Double Exposure" });
-            if (curr === 67) addEvent({ tealium_event: "video_milestone", label: "Light Painting" });
-            if (curr === 80) addEvent({ tealium_event: "video_milestone", label: "Tripod Mode" });
-        }
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isPlayingVideo, videoTime]);
-
   return (
     <main className="fixed inset-0 bg-[#051838] text-white p-4 font-sans flex flex-col overflow-hidden text-left">
       <header className="w-full max-w-7xl mx-auto mb-2 shrink-0 border-b border-[#68D8D5]/30">
         <h1 className="text-xl font-black italic tracking-tighter text-[#68D8D5] pb-1">
-          Tealium + Polaroid : Capturing MORE Memorable Moments through real-time data orchestration
+          Tealium + Polaroid : Capturing MORE Memorable Moments
         </h1>
       </header>
 
       <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+        
         {/* PANE 1: IPHONE */}
         <div className="flex flex-col h-full min-h-0">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic tracking-tighter">1. Device Experience</h2>
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">1. Device Experience</h2>
           <div className="relative flex-1 bg-black rounded-[2.5rem] border-[6px] border-slate-800 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-top" style={{ backgroundImage: `url(${step >= 6 ? '/NowPlus-Home-Screen.jpg' : '/app-bg.jpg'})`, opacity: isPlayingVideo ? 0 : 1 }} />
             {isPlayingVideo && (
@@ -119,22 +104,14 @@ export default function PolaroidUltimateROIPitch() {
             )}
             <div className="absolute bottom-0 left-0 right-0 bg-white/95 p-4 border-t z-10">
               {step === 0 ? (
-                <motion.button onClick={triggerConnect} animate={{ scale: [1, 1.04, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="w-full py-2.5 bg-[#68D8D5] text-[#051838] rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">Connect Now+</motion.button>
+                <motion.button onClick={triggerConnect} className="w-full py-2.5 bg-[#68D8D5] text-[#051838] rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">Connect Now+</motion.button>
               ) : (
                 <div className="text-black text-center font-black text-[10px] uppercase italic flex justify-center items-center gap-2"><Zap size={12} className="text-[#68D8D5] fill-[#68D8D5]"/> Identity Secured</div>
               )}
             </div>
-
             <AnimatePresence>
-              {showNudge && (
-                <motion.div initial={{ y: -50 }} animate={{ y: 20 }} className="absolute top-10 left-4 right-4 bg-[#051838] text-white p-4 rounded-2xl border-l-4 border-[#68D8D5] z-50 shadow-2xl text-left">
-                   <p className="font-bold text-sm italic uppercase tracking-tighter text-[#68D8D5]">Master Your Now+</p>
-                   <p className="text-[11px] text-slate-200 mt-1 leading-relaxed font-medium">Master Expert creative techniques with our Tutorial.</p>
-                   <button onClick={handleAcceptTutorial} className="w-full mt-3 py-2.5 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase shadow-lg">Watch Tutorial</button>
-                </motion.div>
-              )}
               {showApertureNudge && (
-                <motion.div initial={{ y: 50 }} animate={{ y: -100 }} className="absolute bottom-16 left-4 right-4 bg-[#051838] text-white p-6 rounded-2xl border-t-4 border-[#68D8D5] z-50 shadow-2xl text-left min-h-[160px] flex flex-col justify-center">
+                <motion.div initial={{ y: 50 }} animate={{ y: -100 }} className="absolute bottom-16 left-4 right-4 bg-[#051838] text-white p-6 rounded-2xl border-t-4 border-[#68D8D5] z-50 shadow-2xl text-left">
                    <p className="font-black text-sm italic uppercase tracking-widest text-[#68D8D5] mb-2">EVENING CAPTURE DETECTED</p>
                    <p className="text-[12px] text-slate-100 font-medium leading-relaxed">We&apos;ve detected that your shooting at night. Why not try Manual Mode to get more control over your photos.</p>
                    <button onClick={handleActivateManual} className="w-full mt-4 py-3 bg-[#68D8D5] text-[#051838] text-[13px] font-black rounded-lg uppercase shadow-xl tracking-wider">Activate Manual Mode</button>
@@ -160,11 +137,11 @@ export default function PolaroidUltimateROIPitch() {
         </div>
 
         {/* PANE 2: EVENTSTREAM */}
-        <div className="flex flex-col h-full min-h-0">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic tracking-tighter">2. Tealium EventStream</h2>
+        <div className="flex flex-col h-full min-h-0 text-left">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">2. Tealium EventStream</h2>
           <div className="flex-1 bg-[#030d1f] rounded-xl border border-slate-700 p-3 font-mono text-[9px] overflow-y-auto scrollbar-thin">
             {events.map((ev, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-3 p-2 rounded border border-slate-800 bg-blue-500/5">
+              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-3 p-2 rounded border border-slate-800 bg-blue-500/5 text-left">
                 <p className="text-[#68D8D5] font-bold mb-1 uppercase tracking-tighter">[{ev.timestamp}] Event Streamed</p>
                 <pre className="text-slate-300 whitespace-pre-wrap leading-tight text-left">{JSON.stringify(ev, null, 2)}</pre>
               </motion.div>
@@ -174,25 +151,25 @@ export default function PolaroidUltimateROIPitch() {
         </div>
 
         {/* PANE 3: CDP */}
-        <div className="flex flex-col h-full min-h-0">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic tracking-tighter">3. Tealium AudienceStream</h2>
+        <div className="flex flex-col h-full min-h-0 text-left">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">3. Tealium AudienceStream</h2>
           <div className="flex-1 bg-white rounded-xl text-slate-900 flex flex-col shadow-2xl overflow-hidden">
             <div className="bg-[#68D8D5] p-2 flex justify-between items-center border-b border-black/10 shrink-0">
                <div className="flex items-center gap-2 text-[#051838] font-black uppercase italic text-xs"><User size={14}/> Unified Profile</div>
                {step >= 3 && <div className="text-[8px] font-black px-1.5 py-0.5 bg-[#051838] text-white rounded">ID: u_123456</div>}
             </div>
 
-            <div className="p-2 space-y-1.5 overflow-hidden">
+            <div className="p-2 space-y-1 overflow-hidden">
               <section className="bg-slate-50/50 p-2 rounded-lg border border-slate-100">
                 <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b border-slate-200 pb-0.5">Unified Profile Data</p>
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[7px] font-bold text-slate-500 uppercase">Customer Lifetime Value</span>
-                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-xl text-green-600' : 'text-[10px] text-[#051838]'}`}>£{clv.toFixed(2)}</span>
+                <div className="space-y-0">
+                  <div className="flex justify-between items-center py-0.5">
+                    <span className="text-[8px] font-bold text-slate-500 uppercase">Customer Lifetime Value</span>
+                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-xl text-green-600' : 'text-xs text-[#051838]'}`}>£{clv.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-100 pb-0.5">
-                    <span className="text-[7px] font-bold text-slate-500 uppercase">Last Order Value</span>
-                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-xl text-green-600' : 'text-[10px] text-slate-400'}`}>{lastOrderValue > 0 ? `£${lastOrderValue.toFixed(2)}` : "£0.00"}</span>
+                    <span className="text-[8px] font-bold text-slate-500 uppercase">Last Order Value</span>
+                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-xl text-green-600' : 'text-xs text-slate-400'}`}>{lastOrderValue > 0 ? `£${lastOrderValue.toFixed(2)}` : "£0.00"}</span>
                   </div>
                   <Attribute label="First Purchase Date" value={step >= 3 ? firstPurchaseDate : "---"} />
                   <Attribute label="Last Film Purchased" value={step >= 3 ? "Colour I-Type" : "---"} />
@@ -207,7 +184,7 @@ export default function PolaroidUltimateROIPitch() {
 
               <section>
                 <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5">Badges</p>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-3 gap-0.5">
                   <Badge label="Confirmed User" on={step >= 3} />
                   <Badge label="Confirmed Buyer" on={step >= 3} />
                   <Badge label="Aperture Priority" on={videoTime >= 31} />
@@ -217,6 +194,8 @@ export default function PolaroidUltimateROIPitch() {
                   <Badge label="Manual Mode" on={manualModeActive} />
                   <Badge label="Expert Feature" on={step >= 4} />
                   <Badge label="Film Subscriber" on={false} />
+                  <Badge label="Now+ Save ShortCuts" on={false} />
+                  <Badge label="Now+ Lens Filters" on={false} />
                 </div>
               </section>
 
@@ -247,16 +226,16 @@ export default function PolaroidUltimateROIPitch() {
 function Attribute({ label, value }: { label: string, value: string }) {
   return (
     <div className="flex justify-between items-center py-0.5 border-b border-slate-50">
-      <span className="text-[7px] font-bold text-slate-500 uppercase">{label}</span>
-      <span className="text-[8px] font-black text-slate-800">{value}</span>
+      <span className="text-[9px] font-bold text-slate-500 uppercase">{label}</span>
+      <span className="text-[10px] font-black text-slate-800">{value}</span>
     </div>
   );
 }
 
 function Badge({ label, on }: { label: string, on?: boolean }) {
   return (
-    <div className={`p-1 rounded border text-[6px] font-black uppercase flex items-center gap-1 transition-all duration-700 ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
-      <CheckCircle size={8} className={on ? 'text-green-600' : 'text-red-300'} /> {label}
+    <div className={`p-0.5 rounded border text-[5px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
+       {label}
     </div>
   );
 }
