@@ -18,6 +18,9 @@ export default function PolaroidUltimateROIPitch() {
   const [lastOrderValue, setLastOrderValue] = useState(0);
   const [orderComplete, setOrderComplete] = useState(false);
   
+  // Subscription State
+  const [subscriptionActive, setSubscriptionActive] = useState(false);
+  
   const [totalFilms, setTotalFilms] = useState(6);
   const [lastFilmDate, setLastFilmDate] = useState("");
   const [lastCameraDate, setLastCameraDate] = useState("");
@@ -67,20 +70,9 @@ export default function PolaroidUltimateROIPitch() {
   const handleVideoEnd = () => {
     setIsPlayingVideo(false); 
     setStep(5);
-    setTimeout(() => { 
-        setStep(6); 
-        setPhotoCount(5); 
-        addEvent({ tealium_event: "photo_taken", count: 5 }); 
-    }, 1000);
-    
-    setTimeout(() => { 
-        setPhotoCount(6); 
-        addEvent({ tealium_event: "photo_taken", count: 6 }); 
-    }, 3500);
-
-    setTimeout(() => { 
-        setShowApertureNudge(true); 
-    }, 6000); 
+    setTimeout(() => { setStep(6); setPhotoCount(5); addEvent({ tealium_event: "photo_taken", count: 5 }); }, 1000);
+    setTimeout(() => { setPhotoCount(6); addEvent({ tealium_event: "photo_taken", count: 6 }); }, 3500);
+    setTimeout(() => { setShowApertureNudge(true); }, 6000); 
   };
 
   // SEQUENCE TRIGGER 4: Manual Mode -> Film Nudge
@@ -94,15 +86,16 @@ export default function PolaroidUltimateROIPitch() {
     }, 2000);
   };
 
-  // SEQUENCE TRIGGER 5: Purchase
+  // SEQUENCE TRIGGER 5: Purchase Subscription
   const handleOrderFilm = () => {
     setShowFilmNudge(false); 
     setOrderComplete(true); 
     setLastOrderValue(47.99); 
     setClv(528.91); 
     setTotalFilms(7); 
+    setSubscriptionActive(true); // Triggers Orange Logic
     setLastFilmDate(new Date().toLocaleDateString('en-GB'));
-    addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Bundle" });
+    addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Subscription", type: "recurring" });
   };
 
   // Video Progress Tracker for Badges
@@ -223,15 +216,15 @@ export default function PolaroidUltimateROIPitch() {
                 <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="absolute top-1/2 left-4 right-4 -translate-y-1/2 bg-white text-black p-6 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] z-[60] border-2 border-black text-center">
                    <Trophy className="mx-auto mb-2 text-[#68D8D5]" size={32} />
                    <p className="font-black text-sm uppercase italic">Creative Flow Active</p>
-                   <p className="text-[10px] text-slate-600 mt-2 mb-4 font-medium leading-snug">Keep the creative juices flowing. You&apos;re down to your last few shot. Only 2 pictures left on the film.</p>
-                   <button onClick={handleOrderFilm} className="w-full py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase flex items-center justify-center gap-2 shadow-xl"><ShoppingCart size={14} /> Order New Film Now</button>
+                   <p className="text-[10px] text-slate-600 mt-2 mb-4 font-medium leading-snug">Keep the creative juices flowing. Subscribe now so you never run out of film. You&apos;re down to your last few shots.</p>
+                   <button onClick={handleOrderFilm} className="w-full py-3 bg-[#FF5000] text-white text-[11px] font-black rounded-lg uppercase flex items-center justify-center gap-2 shadow-xl hover:bg-[#FF3300] transition-colors"><ShoppingCart size={14} /> Buy Film Subscription</button>
                 </motion.div>
               )}
               {orderComplete && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-[70] bg-[#68D8D5] flex flex-col items-center justify-center p-6 text-[#051838] text-center">
                   <CheckCircle size={80} className="mb-4" />
-                  <p className="text-2xl font-black uppercase italic tracking-tighter mb-2">ORDER SUCCESS</p>
-                  <p className="text-sm font-bold italic leading-tight px-4 opacity-90 underline decoration-2 underline-offset-4 text-[#051838]">Seizing the moment in real-time just resulted in 11% increase in CLV</p>
+                  <p className="text-2xl font-black uppercase italic tracking-tighter mb-2">SUBSCRIPTION SUCCESS</p>
+                  <p className="text-sm font-bold italic leading-tight px-4 opacity-90 underline decoration-2 underline-offset-4 text-[#051838]">Seizing the moment in real-time just resulted in 10% increase in CLV</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -273,6 +266,7 @@ export default function PolaroidUltimateROIPitch() {
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Last Order Value</span>
                     <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-2xl text-green-600' : 'text-sm text-slate-400'}`}>{lastOrderValue > 0 ? `£${lastOrderValue.toFixed(2)}` : "£0.00"}</span>
                   </div>
+                  <Attribute label="Subscription Period" value={subscriptionActive ? "8 Weeks" : "---"} isOrange={subscriptionActive} />
                   <Attribute label="First Purchase Date" value={step >= 3 ? firstPurchaseDate : "---"} />
                   <Attribute label="Last Film Purchased" value={step >= 3 ? "Colour I-Type" : "---"} />
                   <Attribute label="Last Film Purchase Date" value={step >= 3 ? lastFilmDate : "---"} />
@@ -295,7 +289,11 @@ export default function PolaroidUltimateROIPitch() {
                   <Badge label="Tripod Mode" on={videoTime >= 80} />
                   <Badge label="Manual Mode" on={manualModeActive} />
                   <Badge label="Expert Feature" on={step >= 4} />
-                  <Badge label="Film Subscriber" on={false} />
+                  
+                  {/* ORANGE BADGES */}
+                  <Badge label="Film Subscriber" on={subscriptionActive} isOrange={subscriptionActive} />
+                  <Badge label="Predicted VIP" on={subscriptionActive} isOrange={subscriptionActive} />
+                  
                   <Badge label="Now+ Save Shortcuts" on={false} />
                   <Badge label="Now+ Lens Filters" on={false} />
                 </div>
@@ -327,18 +325,32 @@ export default function PolaroidUltimateROIPitch() {
   );
 }
 
-function Attribute({ label, value }: { label: string, value: string }) {
+function Attribute({ label, value, isOrange }: { label: string, value: string, isOrange?: boolean }) {
   return (
     <div className="flex justify-between items-center py-0.5 border-b border-slate-50 last:border-0 text-left">
       <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
-      <span className="text-[11px] font-black text-slate-800">{value}</span>
+      <span className={`text-[11px] font-black ${isOrange ? 'text-[#FF5000]' : 'text-slate-800'}`}>{value}</span>
     </div>
   );
 }
 
-function Badge({ label, on }: { label: string, on?: boolean }) {
+function Badge({ label, on, isOrange }: { label: string, on?: boolean, isOrange?: boolean }) {
+  // If orange active, show Polaroid Orange style. Else if 'on', show Green. Else Red.
+  const activeClass = isOrange 
+    ? 'bg-[#FF5000]/10 border-[#FF5000] text-[#FF5000]' 
+    : on 
+      ? 'bg-green-100 border-green-400 text-green-800' 
+      : 'bg-red-50 border-red-300 text-red-500 opacity-90';
+
+  const iconClass = isOrange 
+    ? 'text-[#FF5000]' 
+    : on 
+      ? 'text-green-600' 
+      : 'text-red-300';
+
   return (
-    <div className={`px-1 py-1.5 rounded border text-[9px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
+    <div className={`px-1 py-1.5 rounded border text-[9px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${activeClass}`}>
+       {isOrange && <Star size={10} className="mr-1 inline fill-current"/>}
        {label}
     </div>
   );
