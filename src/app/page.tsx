@@ -41,42 +41,86 @@ export default function PolaroidUltimateROIPitch() {
 
   useEffect(() => { eventEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [events]);
 
+  // SEQUENCE TRIGGER 1: Connect
   const triggerConnect = () => {
     setStep(1);
     addEvent({ tealium_event: "device_connect", model: "now_plus", status: "success" });
     setTimeout(() => {
-      setStep(3); setClv(480.92); setLastOrderValue(16.99);
+      setStep(3); 
+      setClv(480.92); 
+      setLastOrderValue(16.99);
       addEvent({ tealium_event: "visitor_identity_resolved", uid: "u_123456", clv: 480.92 });
-      setShowNudge(true); // First CTA
+      setShowNudge(true); // Triggers "Master Your Now+"
     }, 1500);
   };
 
+  // SEQUENCE TRIGGER 2: Play Video
   const handleAcceptTutorial = () => {
-    setShowNudge(false); setIsPlayingVideo(true); setStep(4);
+    setShowNudge(false); 
+    setIsPlayingVideo(true); 
+    setStep(4);
     addEvent({ tealium_event: "video_play", video_name: "Now+ Creative Tips" });
   };
 
+  // SEQUENCE TRIGGER 3: Video Ends -> Photos -> Evening Nudge
   const handleVideoEnd = () => {
-    setIsPlayingVideo(false); setStep(5);
-    setTimeout(() => { setStep(6); setPhotoCount(5); addEvent({ tealium_event: "photo_taken", count: 5 }); }, 1500);
-    setTimeout(() => { setPhotoCount(6); addEvent({ tealium_event: "photo_taken", count: 6 }); }, 4000);
-    setTimeout(() => { setShowApertureNudge(true); }, 6500); // Second CTA
+    setIsPlayingVideo(false); 
+    setStep(5);
+    // Force sequence with distinct timeouts to ensure UI updates have time to render
+    setTimeout(() => { 
+        setStep(6); 
+        setPhotoCount(5); 
+        addEvent({ tealium_event: "photo_taken", count: 5 }); 
+    }, 1000);
+    
+    setTimeout(() => { 
+        setPhotoCount(6); 
+        addEvent({ tealium_event: "photo_taken", count: 6 }); 
+    }, 3500);
+
+    setTimeout(() => { 
+        setShowApertureNudge(true); // Triggers "Evening Capture"
+    }, 6000); 
   };
 
+  // SEQUENCE TRIGGER 4: Manual Mode -> Film Nudge
   const handleActivateManual = () => {
-    setShowApertureNudge(false); setManualModeActive(true);
+    setShowApertureNudge(false); 
+    setManualModeActive(true);
     addEvent({ tealium_event: "feature_activated", feature: "manual_mode" });
     setTimeout(() => {
       addEvent({ tealium_event: "audience_joined", audience: "Film Replenishment" });
-      setShowFilmNudge(true); // Third CTA
-    }, 2500);
+      setShowFilmNudge(true); // Triggers "Creative Flow"
+    }, 2000);
   };
 
+  // SEQUENCE TRIGGER 5: Purchase
   const handleOrderFilm = () => {
-    setShowFilmNudge(false); setOrderComplete(true); setLastOrderValue(47.99); setClv(528.91); 
-    setTotalFilms(7); setLastFilmDate(new Date().toLocaleDateString('en-GB'));
+    setShowFilmNudge(false); 
+    setOrderComplete(true); 
+    setLastOrderValue(47.99); 
+    setClv(528.91); 
+    setTotalFilms(7); 
+    setLastFilmDate(new Date().toLocaleDateString('en-GB'));
     addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Bundle" });
   };
+
+  // Video Progress Tracker for Badges
+  useEffect(() => {
+    if (isPlayingVideo && videoRef.current) {
+      const interval = setInterval(() => {
+        const curr = Math.floor(videoRef.current?.currentTime || 0);
+        if (curr > videoTime) {
+            setVideoTime(curr);
+            if (curr === 31) addEvent({ tealium_event: "video_milestone", label: "Aperture Priority" });
+            if (curr === 45) addEvent({ tealium_event: "video_milestone", label: "Double Exposure" });
+            if (curr === 67) addEvent({ tealium_event: "video_milestone", label: "Light Painting" });
+            if (curr === 80) addEvent({ tealium_event: "video_milestone", label: "Tripod Mode" });
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isPlayingVideo, videoTime]);
 
   return (
     <main className="fixed inset-0 bg-[#051838] text-white p-4 font-sans flex flex-col overflow-hidden text-left">
@@ -156,7 +200,7 @@ export default function PolaroidUltimateROIPitch() {
           </div>
         </div>
 
-        {/* PANE 3: CDP - STACKED NATURAL LAYOUT */}
+        {/* PANE 3: CDP - 2 COLUMN BADGES FIXED */}
         <div className="flex flex-col h-full min-h-0 text-left">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">3. Tealium AudienceStream</h2>
           <div className="flex-1 bg-white rounded-xl text-slate-900 flex flex-col shadow-2xl overflow-hidden">
@@ -165,9 +209,9 @@ export default function PolaroidUltimateROIPitch() {
                {step >= 3 && <div className="text-[8px] font-black px-1.5 py-0.5 bg-[#051838] text-white rounded">ID: u_123456</div>}
             </div>
 
-            <div className="p-3 flex flex-col gap-3 h-full overflow-hidden text-left">
+            <div className="p-2 space-y-1.5 overflow-hidden flex flex-col h-full text-left">
               {/* SECTION 1: ATTRIBUTES */}
-              <section className="bg-slate-50/70 p-2.5 rounded-lg border border-slate-200 text-left flex-shrink-0">
+              <section className="bg-slate-50/70 p-2 rounded-lg border border-slate-200 text-left flex-shrink-0">
                 <div className="space-y-0.5">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Customer Lifetime Value</span>
@@ -187,10 +231,10 @@ export default function PolaroidUltimateROIPitch() {
                 </div>
               </section>
 
-              {/* SECTION 2: BADGES */}
-              <section className="text-left flex-shrink-0">
+              {/* SECTION 2: BADGES - 2 COLS */}
+              <section className="text-left flex-shrink-1 min-h-0">
                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5 text-left">Badges</p>
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-2 gap-1">
                   <Badge label="Confirmed User" on={step >= 3} />
                   <Badge label="Confirmed Buyer" on={step >= 3} />
                   <Badge label="Aperture Priority" on={videoTime >= 31} />
@@ -200,8 +244,8 @@ export default function PolaroidUltimateROIPitch() {
                   <Badge label="Manual Mode" on={manualModeActive} />
                   <Badge label="Expert Feature" on={step >= 4} />
                   <Badge label="Film Subscriber" on={false} />
-                  <Badge label="Now+ Shortcuts" on={false} />
-                  <Badge label="Lens Filters" on={false} />
+                  <Badge label="Now+ Save Shortcuts" on={false} />
+                  <Badge label="Now+ Lens Filters" on={false} />
                 </div>
               </section>
 
@@ -234,15 +278,15 @@ export default function PolaroidUltimateROIPitch() {
 function Attribute({ label, value }: { label: string, value: string }) {
   return (
     <div className="flex justify-between items-center py-0.5 border-b border-slate-50 last:border-0 text-left">
-      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
-      <span className="text-[12px] font-black text-slate-800">{value}</span>
+      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
+      <span className="text-[11px] font-black text-slate-800">{value}</span>
     </div>
   );
 }
 
 function Badge({ label, on }: { label: string, on?: boolean }) {
   return (
-    <div className={`p-1 rounded border text-[5.5px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
+    <div className={`px-1 py-1 rounded border text-[6px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
        {label}
     </div>
   );
