@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, CheckCircle, Send, Zap, Trophy, ShoppingCart, Target, TrendingUp, Clock, ArrowRight } from 'lucide-react';
+import { User, CheckCircle, Send, Zap, Trophy, ShoppingCart, Target, TrendingUp, Clock, ArrowRight, Star } from 'lucide-react';
 
 export default function PolaroidUltimateROIPitch() {
   const [showIntro, setShowIntro] = useState(true); 
@@ -93,7 +93,7 @@ export default function PolaroidUltimateROIPitch() {
     setLastOrderValue(47.99); 
     setClv(528.91); 
     setTotalFilms(7); 
-    setSubscriptionActive(true); // Triggers Orange Logic
+    setSubscriptionActive(true); 
     setLastFilmDate(new Date().toLocaleDateString('en-GB'));
     addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Subscription", type: "recurring" });
   };
@@ -341,12 +341,6 @@ function Badge({ label, on, isOrange }: { label: string, on?: boolean, isOrange?
     : on 
       ? 'bg-green-100 border-green-400 text-green-800' 
       : 'bg-red-50 border-red-300 text-red-500 opacity-90';
-
-  const iconClass = isOrange 
-    ? 'text-[#FF5000]' 
-    : on 
-      ? 'text-green-600' 
-      : 'text-red-300';
 
   return (
     <div className={`px-1 py-1.5 rounded border text-[9px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${activeClass}`}>
