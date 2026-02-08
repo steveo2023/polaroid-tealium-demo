@@ -47,7 +47,7 @@ export default function PolaroidUltimateROIPitch() {
     setTimeout(() => {
       setStep(3); setClv(480.92); setLastOrderValue(16.99);
       addEvent({ tealium_event: "visitor_identity_resolved", uid: "u_123456", clv: 480.92 });
-      setShowNudge(true); // FIRST CTA RESTORED
+      setShowNudge(true); // First CTA
     }, 1500);
   };
 
@@ -60,7 +60,7 @@ export default function PolaroidUltimateROIPitch() {
     setIsPlayingVideo(false); setStep(5);
     setTimeout(() => { setStep(6); setPhotoCount(5); addEvent({ tealium_event: "photo_taken", count: 5 }); }, 1500);
     setTimeout(() => { setPhotoCount(6); addEvent({ tealium_event: "photo_taken", count: 6 }); }, 4000);
-    setTimeout(() => { setShowApertureNudge(true); }, 6500); // SECOND CTA RESTORED
+    setTimeout(() => { setShowApertureNudge(true); }, 6500); // Second CTA
   };
 
   const handleActivateManual = () => {
@@ -68,7 +68,7 @@ export default function PolaroidUltimateROIPitch() {
     addEvent({ tealium_event: "feature_activated", feature: "manual_mode" });
     setTimeout(() => {
       addEvent({ tealium_event: "audience_joined", audience: "Film Replenishment" });
-      setShowFilmNudge(true);
+      setShowFilmNudge(true); // Third CTA
     }, 2500);
   };
 
@@ -78,25 +78,9 @@ export default function PolaroidUltimateROIPitch() {
     addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Bundle" });
   };
 
-  useEffect(() => {
-    if (isPlayingVideo && videoRef.current) {
-      const interval = setInterval(() => {
-        const curr = Math.floor(videoRef.current?.currentTime || 0);
-        if (curr > videoTime) {
-            setVideoTime(curr);
-            if (curr === 31) addEvent({ tealium_event: "video_milestone", label: "Aperture Priority" });
-            if (curr === 45) addEvent({ tealium_event: "video_milestone", label: "Double Exposure" });
-            if (curr === 67) addEvent({ tealium_event: "video_milestone", label: "Light Painting" });
-            if (curr === 80) addEvent({ tealium_event: "video_milestone", label: "Tripod Mode" });
-        }
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isPlayingVideo, videoTime]);
-
   return (
     <main className="fixed inset-0 bg-[#051838] text-white p-4 font-sans flex flex-col overflow-hidden text-left">
-      <header className="w-full max-w-7xl mx-auto mb-2 shrink-0 border-b border-[#68D8D5]/30">
+      <header className="w-full max-w-7xl mx-auto mb-2 shrink-0 border-b border-[#68D8D5]/30 text-left">
         <h1 className="text-xl font-black italic tracking-tighter text-[#68D8D5] pb-1">
           Tealium + Polaroid : Capturing MORE Memorable Moments
         </h1>
@@ -172,7 +156,7 @@ export default function PolaroidUltimateROIPitch() {
           </div>
         </div>
 
-        {/* PANE 3: CDP - FIXED & LEGIBLE */}
+        {/* PANE 3: CDP - STACKED NATURAL LAYOUT */}
         <div className="flex flex-col h-full min-h-0 text-left">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">3. Tealium AudienceStream</h2>
           <div className="flex-1 bg-white rounded-xl text-slate-900 flex flex-col shadow-2xl overflow-hidden">
@@ -181,14 +165,15 @@ export default function PolaroidUltimateROIPitch() {
                {step >= 3 && <div className="text-[8px] font-black px-1.5 py-0.5 bg-[#051838] text-white rounded">ID: u_123456</div>}
             </div>
 
-            <div className="p-2 space-y-1.5 overflow-hidden flex flex-col h-full justify-between text-left">
-              <section className="bg-slate-50/50 p-2 rounded-lg border border-slate-100 text-left">
+            <div className="p-3 flex flex-col gap-3 h-full overflow-hidden text-left">
+              {/* SECTION 1: ATTRIBUTES */}
+              <section className="bg-slate-50/70 p-2.5 rounded-lg border border-slate-200 text-left flex-shrink-0">
                 <div className="space-y-0.5">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Customer Lifetime Value</span>
                     <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-2xl text-green-600' : 'text-sm text-[#051838]'}`}>£{clv.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center border-b border-slate-100 pb-0.5">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-1 mb-1">
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Last Order Value</span>
                     <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-2xl text-green-600' : 'text-sm text-slate-400'}`}>{lastOrderValue > 0 ? `£${lastOrderValue.toFixed(2)}` : "£0.00"}</span>
                   </div>
@@ -202,8 +187,9 @@ export default function PolaroidUltimateROIPitch() {
                 </div>
               </section>
 
-              <section>
-                <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5 text-left">Badges</p>
+              {/* SECTION 2: BADGES */}
+              <section className="text-left flex-shrink-0">
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5 text-left">Badges</p>
                 <div className="grid grid-cols-3 gap-1">
                   <Badge label="Confirmed User" on={step >= 3} />
                   <Badge label="Confirmed Buyer" on={step >= 3} />
@@ -219,24 +205,24 @@ export default function PolaroidUltimateROIPitch() {
                 </div>
               </section>
 
-              <div className="space-y-1.5 text-left">
-                <section>
-                  <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Audiences</p>
-                  <div className="flex flex-col gap-1">
-                    <div className={`p-1 rounded font-black uppercase text-[8px] border ${step >= 3 ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>New Owner - Auto Only</div>
-                    <div className={`p-1 rounded font-black uppercase text-[8px] border ${showFilmNudge || orderComplete ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>Film Replenishment Needed</div>
-                  </div>
-                </section>
+              {/* SECTION 3: AUDIENCES */}
+              <section className="text-left flex-shrink-0">
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Audiences</p>
+                <div className="flex flex-col gap-1">
+                  <div className={`p-1.5 rounded font-black uppercase text-[8px] border ${step >= 3 ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>New Owner - Auto Only</div>
+                  <div className={`p-1.5 rounded font-black uppercase text-[8px] border ${showFilmNudge || orderComplete ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>Film Replenishment Needed</div>
+                </div>
+              </section>
 
-                <section className="pb-1 text-left">
-                  <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Activations</p>
-                  <div className="space-y-1 text-left">
-                    {step >= 3 && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Send size={10} className="inline mr-2 text-[#68D8D5]"/> Onboarding</span><CheckCircle size={10} className="text-green-500"/></div>}
-                    {manualModeActive && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Zap size={10} className="inline mr-2 text-[#68D8D5]"/> Night Mode</span><span className="text-green-500 font-black">ACTIVE</span></div>}
-                    {(showFilmNudge || orderComplete) && <div className="p-1.5 bg-[#051838] text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Trophy size={10} className="inline mr-2 text-[#68D8D5]"/> Replenishment</span><span className="text-[#68D8D5] animate-pulse">SENT</span></div>}
-                  </div>
-                </section>
-              </div>
+              {/* SECTION 4: ACTIVATIONS */}
+              <section className="pb-1 text-left flex-shrink-0">
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Activations</p>
+                <div className="space-y-1 text-left">
+                  {step >= 3 && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Send size={10} className="inline mr-2 text-[#68D8D5]"/> Onboarding</span><CheckCircle size={10} className="text-green-500"/></div>}
+                  {manualModeActive && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Zap size={10} className="inline mr-2 text-[#68D8D5]"/> Night Mode</span><span className="text-green-500 font-black">ACTIVE</span></div>}
+                  {(showFilmNudge || orderComplete) && <div className="p-1.5 bg-[#051838] text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Trophy size={10} className="inline mr-2 text-[#68D8D5]"/> Replenishment</span><span className="text-[#68D8D5] animate-pulse">SENT</span></div>}
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -247,9 +233,9 @@ export default function PolaroidUltimateROIPitch() {
 
 function Attribute({ label, value }: { label: string, value: string }) {
   return (
-    <div className="flex justify-between items-center py-0.5 border-b border-slate-50 text-left">
-      <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
-      <span className="text-[11px] font-black text-slate-800">{value}</span>
+    <div className="flex justify-between items-center py-0.5 border-b border-slate-50 last:border-0 text-left">
+      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
+      <span className="text-[12px] font-black text-slate-800">{value}</span>
     </div>
   );
 }
