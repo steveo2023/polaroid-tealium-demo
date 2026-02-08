@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, CheckCircle, Send, Zap, Trophy, ShoppingCart } from 'lucide-react';
+import { User, CheckCircle, Send, Zap, Trophy, ShoppingCart, Target, TrendingUp, Clock, ArrowRight } from 'lucide-react';
 
 export default function PolaroidUltimateROIPitch() {
+  const [showIntro, setShowIntro] = useState(true); // New State for Intro Overlay
   const [step, setStep] = useState(0); 
   const [showNudge, setShowNudge] = useState(false);
   const [events, setEvents] = useState<any[]>([]);
@@ -123,6 +124,58 @@ export default function PolaroidUltimateROIPitch() {
 
   return (
     <main className="fixed inset-0 bg-[#051838] text-white p-4 font-sans flex flex-col overflow-hidden text-left">
+      
+      {/* STRATEGIC OVERLAY */}
+      <AnimatePresence>
+        {showIntro && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed inset-0 z-[100] bg-[#051838]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+          >
+            <div className="max-w-3xl w-full border border-[#68D8D5]/30 p-10 rounded-3xl bg-[#051838] shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#68D8D5] to-blue-600"></div>
+              
+              <h1 className="text-4xl font-black italic tracking-tighter text-white mb-6">
+                Polaroid's North Star: <span className="text-[#68D8D5]">Capturing Memorable Moments</span>
+              </h1>
+              
+              <p className="text-lg text-slate-300 mb-8 leading-relaxed font-light">
+                To achieve this, your platform must ingest events, resolve identity, and evaluate the next best action <strong className="text-white font-bold">in real-time.</strong>
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-left">
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                  <Clock className="text-[#68D8D5] mb-3" size={32} />
+                  <h3 className="font-bold text-sm uppercase tracking-widest mb-2">The Urgency</h3>
+                  <p className="text-xs text-slate-400">You must seize the moment <em className="text-white">now</em>. Evaluating data an hour later is too late.</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                  <Target className="text-[#68D8D5] mb-3" size={32} />
+                  <h3 className="font-bold text-sm uppercase tracking-widest mb-2">The Action</h3>
+                  <p className="text-xs text-slate-400">Nudging users to utilize <strong className="text-white">Expert Features</strong> (e.g., Manual Mode) exactly when they need them.</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                  <TrendingUp className="text-[#68D8D5] mb-3" size={32} />
+                  <h3 className="font-bold text-sm uppercase tracking-widest mb-2">The Result</h3>
+                  <p className="text-xs text-slate-400">Driving <strong className="text-white">Film Subscriptions</strong> & Retention, directly increasing Customer Lifetime Value.</p>
+                </div>
+              </div>
+
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowIntro(false)}
+                className="group relative px-8 py-4 bg-[#68D8D5] text-[#051838] font-black text-sm uppercase tracking-widest rounded-xl shadow-[0_0_20px_rgba(104,216,213,0.4)] flex items-center gap-3 mx-auto"
+              >
+                Continue to Demo <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className="w-full max-w-7xl mx-auto mb-2 shrink-0 border-b border-[#68D8D5]/30 text-left">
         <h1 className="text-xl font-black italic tracking-tighter text-[#68D8D5] pb-1">
           Tealium + Polaroid : Capturing MORE Memorable Moments
@@ -133,160 +186,4 @@ export default function PolaroidUltimateROIPitch() {
         {/* PANE 1: IPHONE */}
         <div className="flex flex-col h-full min-h-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">1. Device Experience</h2>
-          <div className="relative flex-1 bg-black rounded-[2.5rem] border-[6px] border-slate-800 shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-cover bg-top" style={{ backgroundImage: `url(${step >= 6 ? '/NowPlus-Home-Screen.jpg' : '/app-bg.jpg'})`, opacity: isPlayingVideo ? 0 : 1 }} />
-            {isPlayingVideo && (
-              <video ref={videoRef} onEnded={handleVideoEnd} autoPlay className="absolute inset-0 w-full h-full object-cover z-20" src="https://www.dropbox.com/scl/fi/csfmr73hwhutkxpdzxyju/NowPlus-video.MP4?rlkey=y7g4jz37z214xamyuhp84acmc&st=2wmh33ef&dl=1" />
-            )}
-            {step === 6 && (
-              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/15">
-                <motion.span key={photoCount} initial={{ scale: 0.1 }} animate={{ scale: 1 }} className="text-[10rem] font-black text-black leading-none drop-shadow-md">{photoCount}</motion.span>
-                <p className="text-black font-black uppercase tracking-[0.25em] text-xs -mt-2 italic">Photos Taken</p>
-              </div>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 bg-white/95 p-4 border-t z-10">
-              {step === 0 ? (
-                <motion.button onClick={triggerConnect} className="w-full py-2.5 bg-[#68D8D5] text-[#051838] rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">Connect Now+</motion.button>
-              ) : (
-                <div className="text-black text-center font-black text-[10px] uppercase italic flex justify-center items-center gap-2"><Zap size={12} className="text-[#68D8D5] fill-[#68D8D5]"/> Identity Secured</div>
-              )}
-            </div>
-            <AnimatePresence>
-              {showNudge && (
-                <motion.div initial={{ y: -50 }} animate={{ y: 20 }} className="absolute top-10 left-4 right-4 bg-[#051838] text-white p-4 rounded-2xl border-l-4 border-[#68D8D5] z-50 shadow-2xl text-left">
-                   <p className="font-bold text-xs italic uppercase tracking-tighter text-[#68D8D5]">Master Your Now+</p>
-                   <p className="text-[10px] text-slate-200 mt-1 leading-relaxed font-medium">Master Expert creative techniques with our Tutorial.</p>
-                   <button onClick={handleAcceptTutorial} className="w-full mt-3 py-2 bg-[#68D8D5] text-[#051838] text-[10px] font-black rounded-lg uppercase shadow-lg">Watch Tutorial</button>
-                </motion.div>
-              )}
-              {showApertureNudge && (
-                <motion.div initial={{ y: 50 }} animate={{ y: -100 }} className="absolute bottom-16 left-4 right-4 bg-[#051838] text-white p-5 rounded-2xl border-t-4 border-[#68D8D5] z-50 shadow-2xl text-left">
-                   <p className="font-black text-xs italic uppercase tracking-widest text-[#68D8D5] mb-2">EVENING CAPTURE DETECTED</p>
-                   <p className="text-[11px] text-slate-100 font-medium leading-relaxed mb-3">We&apos;ve detected that your shooting at night. Why not try Manual Mode to get more control over your photos.</p>
-                   <button onClick={handleActivateManual} className="w-full py-3 bg-[#68D8D5] text-[#051838] text-[12px] font-black rounded-lg uppercase shadow-xl tracking-wider">Activate Manual Mode</button>
-                </motion.div>
-              )}
-              {showFilmNudge && (
-                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="absolute top-1/2 left-4 right-4 -translate-y-1/2 bg-white text-black p-6 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] z-[60] border-2 border-black text-center">
-                   <Trophy className="mx-auto mb-2 text-[#68D8D5]" size={32} />
-                   <p className="font-black text-sm uppercase italic">Creative Flow Active</p>
-                   <p className="text-[10px] text-slate-600 mt-2 mb-4 font-medium leading-snug">Keep the creative juices flowing. You&apos;re down to your last few shot. Only 2 pictures left on the film.</p>
-                   <button onClick={handleOrderFilm} className="w-full py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase flex items-center justify-center gap-2 shadow-xl"><ShoppingCart size={14} /> Order New Film Now</button>
-                </motion.div>
-              )}
-              {orderComplete && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-[70] bg-[#68D8D5] flex flex-col items-center justify-center p-6 text-[#051838] text-center">
-                  <CheckCircle size={80} className="mb-4" />
-                  <p className="text-2xl font-black uppercase italic tracking-tighter mb-2">ORDER SUCCESS</p>
-                  <p className="text-sm font-bold italic leading-tight px-4 opacity-90 underline decoration-2 underline-offset-4 text-[#051838]">Seizing the moment in real-time just resulted in 11% increase in CLV</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* PANE 2: EVENTSTREAM */}
-        <div className="flex flex-col h-full min-h-0 text-left">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">2. Tealium EventStream</h2>
-          <div className="flex-1 bg-[#030d1f] rounded-xl border border-slate-700 p-3 font-mono text-[9px] overflow-y-auto scrollbar-thin text-left">
-            {events.map((ev, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-3 p-2 rounded border border-slate-800 bg-blue-500/5 text-left text-xs">
-                <p className="text-[#68D8D5] font-bold mb-1 uppercase tracking-tighter">[{ev.timestamp}] Event Streamed</p>
-                <pre className="text-slate-300 whitespace-pre-wrap leading-tight text-left">{JSON.stringify(ev, null, 2)}</pre>
-              </motion.div>
-            ))}
-            <div ref={eventEndRef} />
-          </div>
-        </div>
-
-        {/* PANE 3: CDP - 2 COLUMN BADGES FIXED */}
-        <div className="flex flex-col h-full min-h-0 text-left">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 italic">3. Tealium AudienceStream</h2>
-          <div className="flex-1 bg-white rounded-xl text-slate-900 flex flex-col shadow-2xl overflow-hidden">
-            <div className="bg-[#68D8D5] p-2 flex justify-between items-center border-b border-black/10 shrink-0">
-               <div className="flex items-center gap-2 text-[#051838] font-black uppercase italic text-xs"><User size={14}/> Unified Profile</div>
-               {step >= 3 && <div className="text-[8px] font-black px-1.5 py-0.5 bg-[#051838] text-white rounded">ID: u_123456</div>}
-            </div>
-
-            <div className="p-2 space-y-1.5 overflow-hidden flex flex-col h-full text-left">
-              {/* SECTION 1: ATTRIBUTES */}
-              <section className="bg-slate-50/70 p-2 rounded-lg border border-slate-200 text-left flex-shrink-0">
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Customer Lifetime Value</span>
-                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-2xl text-green-600' : 'text-sm text-[#051838]'}`}>£{clv.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-slate-100 pb-1 mb-1">
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Last Order Value</span>
-                    <span className={`font-black transition-all duration-700 ${orderComplete ? 'text-2xl text-green-600' : 'text-sm text-slate-400'}`}>{lastOrderValue > 0 ? `£${lastOrderValue.toFixed(2)}` : "£0.00"}</span>
-                  </div>
-                  <Attribute label="First Purchase Date" value={step >= 3 ? firstPurchaseDate : "---"} />
-                  <Attribute label="Last Film Purchased" value={step >= 3 ? "Colour I-Type" : "---"} />
-                  <Attribute label="Last Film Purchase Date" value={step >= 3 ? lastFilmDate : "---"} />
-                  <Attribute label="Total No. Films Purchased" value={step >= 3 ? totalFilms.toString() : "---"} />
-                  <Attribute label="Last Camera Purchase" value={step >= 3 ? "Polaroid Now+" : "---"} />
-                  <Attribute label="Cameras Owned" value={step >= 3 ? "Flip, Now+" : "---"} />
-                  <Attribute label="Email" value={step >= 3 ? "demotealium@gmail.com" : "---"} />
-                </div>
-              </section>
-
-              {/* SECTION 2: BADGES - 2 COLS, 50% LARGER TEXT */}
-              <section className="text-left flex-shrink-1 min-h-0">
-                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1 border-b pb-0.5 text-left">Badges</p>
-                <div className="grid grid-cols-2 gap-1">
-                  <Badge label="Confirmed User" on={step >= 3} />
-                  <Badge label="Confirmed Buyer" on={step >= 3} />
-                  <Badge label="Aperture Priority" on={videoTime >= 31} />
-                  <Badge label="Double Exposure" on={videoTime >= 45} />
-                  <Badge label="Light Painting" on={videoTime >= 67} />
-                  <Badge label="Tripod Mode" on={videoTime >= 80} />
-                  <Badge label="Manual Mode" on={manualModeActive} />
-                  <Badge label="Expert Feature" on={step >= 4} />
-                  <Badge label="Film Subscriber" on={false} />
-                  <Badge label="Now+ Save Shortcuts" on={false} />
-                  <Badge label="Now+ Lens Filters" on={false} />
-                </div>
-              </section>
-
-              {/* SECTION 3: AUDIENCES */}
-              <section className="text-left flex-shrink-0">
-                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Audiences</p>
-                <div className="flex flex-col gap-1">
-                  <div className={`p-1.5 rounded font-black uppercase text-[8px] border ${step >= 3 ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>New Owner - Auto Only</div>
-                  <div className={`p-1.5 rounded font-black uppercase text-[8px] border ${showFilmNudge || orderComplete ? 'bg-[#007CC2] text-white border-[#006699]' : 'bg-slate-50 text-slate-300 opacity-60'}`}>Film Replenishment Needed</div>
-                </div>
-              </section>
-
-              {/* SECTION 4: ACTIVATIONS */}
-              <section className="pb-1 text-left flex-shrink-0">
-                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 text-left">Activations</p>
-                <div className="space-y-1 text-left">
-                  {step >= 3 && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Send size={10} className="inline mr-2 text-[#68D8D5]"/> Onboarding</span><CheckCircle size={10} className="text-green-500"/></div>}
-                  {manualModeActive && <div className="p-1.5 bg-slate-900 text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Zap size={10} className="inline mr-2 text-[#68D8D5]"/> Night Mode</span><span className="text-green-500 font-black">ACTIVE</span></div>}
-                  {(showFilmNudge || orderComplete) && <div className="p-1.5 bg-[#051838] text-white rounded font-bold text-[8px] flex justify-between border-l-2 border-[#68D8D5]"><span><Trophy size={10} className="inline mr-2 text-[#68D8D5]"/> Replenishment</span><span className="text-[#68D8D5] animate-pulse">SENT</span></div>}
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function Attribute({ label, value }: { label: string, value: string }) {
-  return (
-    <div className="flex justify-between items-center py-0.5 border-b border-slate-50 last:border-0 text-left">
-      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{label}</span>
-      <span className="text-[11px] font-black text-slate-800">{value}</span>
-    </div>
-  );
-}
-
-function Badge({ label, on }: { label: string, on?: boolean }) {
-  return (
-    <div className={`px-1 py-1.5 rounded border text-[9px] font-black uppercase flex items-center justify-center text-center transition-all duration-700 leading-tight ${on ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-50 border-red-300 text-red-500 opacity-90'}`}>
-       {label}
-    </div>
-  );
-}
+          <div className="relative flex-1 bg-black rounded-[2.5rem] border-[6px] border-slate-800 shadow-2xl overflow-hidden
