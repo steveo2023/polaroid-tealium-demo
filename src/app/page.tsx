@@ -58,7 +58,6 @@ export default function PolaroidUltimateROIPitch() {
 
   const handleVideoEnd = () => {
     setIsPlayingVideo(false); setStep(5);
-    // RESTORED PHOTO ANIMATION SEQUENCE
     setTimeout(() => { setStep(6); setPhotoCount(5); addEvent({ tealium_event: "photo_taken", count: 5 }); }, 1500);
     setTimeout(() => { setPhotoCount(6); addEvent({ tealium_event: "photo_taken", count: 6 }); }, 4000);
     setTimeout(() => { setShowApertureNudge(true); }, 6500);
@@ -79,9 +78,25 @@ export default function PolaroidUltimateROIPitch() {
     addEvent({ tealium_event: "purchase", amount: 47.99, currency: "GBP", item: "i-Type Film Bundle" });
   };
 
+  useEffect(() => {
+    if (isPlayingVideo && videoRef.current) {
+      const interval = setInterval(() => {
+        const curr = Math.floor(videoRef.current?.currentTime || 0);
+        if (curr > videoTime) {
+            setVideoTime(curr);
+            if (curr === 31) addEvent({ tealium_event: "video_milestone", label: "Aperture Priority" });
+            if (curr === 45) addEvent({ tealium_event: "video_milestone", label: "Double Exposure" });
+            if (curr === 67) addEvent({ tealium_event: "video_milestone", label: "Light Painting" });
+            if (curr === 80) addEvent({ tealium_event: "video_milestone", label: "Tripod Mode" });
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isPlayingVideo, videoTime]);
+
   return (
     <main className="fixed inset-0 bg-[#051838] text-white p-4 font-sans flex flex-col overflow-hidden text-left">
-      <header className="w-full max-w-7xl mx-auto mb-6 shrink-0 border-b border-[#68D8D5]/30">
+      <header className="w-full max-w-7xl mx-auto mb-4 shrink-0 border-b border-[#68D8D5]/30">
         <h1 className="text-xl font-black italic tracking-tighter text-[#68D8D5] pb-2 text-left">
           Tealium + Polaroid : Capturing MORE Memorable Moments through real-time data orchestration
         </h1>
@@ -97,42 +112,37 @@ export default function PolaroidUltimateROIPitch() {
             {isPlayingVideo && (
               <video ref={videoRef} onEnded={handleVideoEnd} autoPlay className="absolute inset-0 w-full h-full object-cover z-20" src="https://www.dropbox.com/scl/fi/csfmr73hwhutkxpdzxyju/NowPlus-video.MP4?rlkey=y7g4jz37z214xamyuhp84acmc&st=2wmh33ef&dl=1" />
             )}
-            
             {step === 6 && (
               <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/15">
                 <motion.span key={photoCount} initial={{ scale: 0.1 }} animate={{ scale: 1 }} className="text-[11rem] font-black text-black leading-none drop-shadow-md">{photoCount}</motion.span>
                 <p className="text-black font-black uppercase tracking-[0.25em] text-sm -mt-2 italic">Photos Taken</p>
               </div>
             )}
-
             <div className="absolute bottom-0 left-0 right-0 bg-white/95 p-5 border-t z-10">
               {step === 0 ? (
-                <motion.button onClick={triggerConnect} animate={{ scale: [1, 1.04, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="w-full py-3 bg-[#68D8D5] text-[#051838] rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">Connect Now+</motion.button>
+                <motion.button onClick={triggerConnect} animate={{ scale: [1, 1.04, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="w-full py-3 bg-[#68D8D5] text-[#051838] rounded-xl font-black uppercase text-xs tracking-widest shadow-lg text-center">Connect Now+</motion.button>
               ) : (
                 <div className="text-black text-center font-black text-[10px] uppercase italic flex justify-center items-center gap-2"><Zap size={14} className="text-[#68D8D5] fill-[#68D8D5]"/> Identity Secured</div>
               )}
             </div>
-
             <AnimatePresence>
               {showNudge && (
                 <motion.div initial={{ y: -50 }} animate={{ y: 25 }} className="absolute top-12 left-4 right-4 bg-[#051838] text-white p-5 rounded-2xl border-l-4 border-[#68D8D5] z-50 shadow-2xl">
                    <p className="font-bold text-sm italic uppercase tracking-tighter text-[#68D8D5]">Master Your Now+</p>
-                   <button onClick={handleAcceptTutorial} className="w-full mt-4 py-2.5 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase shadow-lg">Watch Tutorial</button>
+                   <button onClick={handleAcceptTutorial} className="w-full mt-4 py-2.5 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase shadow-lg text-center">Watch Tutorial</button>
                 </motion.div>
               )}
               {showApertureNudge && (
                 <motion.div initial={{ y: 50 }} animate={{ y: -110 }} className="absolute bottom-16 left-4 right-4 bg-[#051838] text-white p-6 rounded-2xl border-t-4 border-[#68D8D5] z-50 shadow-2xl">
                    <p className="font-bold text-sm italic uppercase tracking-tighter text-[#68D8D5]">Evening Capture Detected</p>
-                   <button onClick={handleActivateManual} className="w-full mt-4 py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase shadow-xl">Activate Manual Mode</button>
+                   <button onClick={handleActivateManual} className="w-full mt-4 py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase shadow-xl text-center">Activate Manual Mode</button>
                 </motion.div>
               )}
               {showFilmNudge && (
                 <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="absolute top-1/2 left-4 right-4 -translate-y-1/2 bg-white text-black p-6 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] z-[60] border-2 border-black">
                    <Trophy className="mx-auto mb-2 text-[#68D8D5]" size={32} />
                    <p className="font-black text-sm uppercase italic text-center">Creative Flow Active</p>
-                   <button onClick={handleOrderFilm} className="w-full mt-4 py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase flex items-center justify-center gap-2 shadow-xl">
-                     <ShoppingCart size={14} /> Order New Film Now
-                   </button>
+                   <button onClick={handleOrderFilm} className="w-full mt-4 py-3 bg-[#68D8D5] text-[#051838] text-[11px] font-black rounded-lg uppercase flex items-center justify-center gap-2 shadow-xl text-center"><ShoppingCart size={14} /> Order New Film Now</button>
                 </motion.div>
               )}
               {orderComplete && (
@@ -152,25 +162,22 @@ export default function PolaroidUltimateROIPitch() {
             {events.map((ev, i) => (
               <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 p-3 rounded border border-slate-800 bg-blue-500/5">
                 <p className="text-[#68D8D5] font-bold mb-1 uppercase tracking-tighter">[{ev.timestamp}] Event Streamed</p>
-                <pre className="text-slate-300 whitespace-pre-wrap leading-tight">{JSON.stringify(ev, null, 2)}</pre>
+                <pre className="text-slate-300 whitespace-pre-wrap leading-tight text-left">{JSON.stringify(ev, null, 2)}</pre>
               </motion.div>
             ))}
             <div ref={eventEndRef} />
           </div>
         </div>
 
-        {/* PANE 3: CDP - OPTIMIZED SCROLL */}
+        {/* PANE 3: CDP */}
         <div className="flex flex-col h-full min-h-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 italic tracking-tighter">3. Tealium AudienceStream</h2>
           <div className="flex-1 bg-white rounded-xl text-slate-900 flex flex-col shadow-2xl overflow-hidden">
             <div className="bg-[#68D8D5] p-3 flex justify-between items-center border-b border-black/10 shrink-0">
-               <div className="flex items-center gap-2 text-[#051838]">
-                 <User size={16}/><h3 className="font-black uppercase tracking-tight italic text-sm">Unified Profile</h3>
-               </div>
+               <div className="flex items-center gap-2 text-[#051838] font-black uppercase italic text-sm"><User size={16}/> Unified Profile</div>
             </div>
 
             <div className="p-3 space-y-3 overflow-y-auto scrollbar-thin">
-              {/* MERGED ROI & VISITOR ATTRIBUTES */}
               <section className="bg-slate-50/50 p-2 rounded-lg border border-slate-100">
                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2 border-b border-slate-200 pb-1">Unified Profile Data</p>
                 <div className="space-y-1">
@@ -188,6 +195,8 @@ export default function PolaroidUltimateROIPitch() {
                   <Attribute label="Total No. Films Purchased" value={step >= 3 ? totalFilms.toString() : "---"} />
                   <Attribute label="Last Camera Purchase" value={step >= 3 ? "Polaroid Now+" : "---"} />
                   <Attribute label="Last Camera Purchase Date" value={step >= 3 ? lastCameraDate : "---"} />
+                  <Attribute label="Cameras Owned" value={step >= 3 ? "Flip, Now+" : "---"} />
+                  <Attribute label="Email" value={step >= 3 ? "demotealium@gmail.com" : "---"} />
                 </div>
               </section>
 
@@ -196,6 +205,10 @@ export default function PolaroidUltimateROIPitch() {
                 <div className="grid grid-cols-2 gap-1.5">
                   <Badge label="Confirmed User" on={step >= 3} />
                   <Badge label="Confirmed Buyer" on={step >= 3} />
+                  <Badge label="Aperture Priority" on={videoTime >= 31} />
+                  <Badge label="Double Exposure" on={videoTime >= 45} />
+                  <Badge label="Light Painting" on={videoTime >= 67} />
+                  <Badge label="Tripod Mode" on={videoTime >= 80} />
                   <Badge label="Manual Mode" on={manualModeActive} />
                   <Badge label="Expert Feature" on={step >= 4} />
                   <Badge label="Film Subscriber" on={false} customColor="text-slate-300 bg-slate-50" />
